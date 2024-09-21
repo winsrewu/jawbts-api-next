@@ -8,30 +8,14 @@ jobs:
     runs-on: ubuntu-latest
     steps:            
       - uses: actions/checkout@v4
-      - name: Login to DockerHub
-        run: |
-          docker version
-          # 登录阿里云镜像仓库
-          echo "${{ secrets.DOCKER_PASSWORD }}" | docker login --username=${{ secrets.DOCKER_USERNAME }} --password-stdin ${{ secrets.DOCKER_URL }}
-      - name: Cd to project directory
-        run: |
-          # 切换到项目目录
-          cd ${{ github.workspace }}
-          ls
-
-      - name: Build the Docker image
-        run: |
-          # 使用Dockerfile构建镜像
-          docker build -t ${{ secrets.DOCKER_URL }}/jawbts/jawbts-api-domestic:latest .
-        continue-on-error: true
-
-      - name: Push the Docker image
-        run: |
-          # 推送镜像到镜像仓库
-          docker push ${{ secrets.DOCKER_URL }}/jawbts/jawbts-api-domestic:latest
-        continue-on-error: true
-
-      - name: Logout from DockerHub
-        run: |
-          # 登出镜像仓库
-          docker logout ${{ secrets.DOCKER_URL }}
+      - name: Run the Action
+        uses: gacts/run-and-post-run@v1
+        with:
+          run: |
+            docker version
+            echo "${{ secrets.DOCKER_PASSWORD }}" | docker login --username=${{ secrets.DOCKER_USERNAME }} --password-stdin ${{ secrets.DOCKER_URL }}
+            cd ${{ github.workspace }}
+            ls
+            docker build -t ${{ secrets.DOCKER_URL }}/jawbts/jawbts-api-domestic:latest .
+            docker push ${{ secrets.DOCKER_URL }}/jawbts/jawbts-api-domestic:latest
+          post: docker logout ${{ secrets.DOCKER_URL }}
