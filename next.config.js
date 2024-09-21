@@ -19,8 +19,7 @@ const nextConfig = {
     },
     experimental: {
         instrumentationHook : true,
-    },
-    target: "serverless",
+    }
 }
 
 
