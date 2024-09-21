@@ -7,17 +7,23 @@ jobs:
   build:
     runs-on: ubuntu-latest
     steps:
-      - name: Build the Docker image
+      - name: Login to DockerHub
         run: |
           docker version
           # 登录阿里云镜像仓库
           docker login --username=${{ secrets.DOCKER_USERNAME }} --password=${{ secrets.DOCKER_PASSWORD }} ${{ secrets.DOCKER_URL }}
-
+      - name: Cd to project directory
+        run: |
           # 切换到项目目录
           cd ${{ github.workspace }}
           ls
 
+      - name: Build the Docker image
+        run: |
           # 使用Dockerfile构建镜像
           docker build -t nextjs-docker .
+
+      - name: Push the Docker image
+        run: |
           # 推送镜像到镜像仓库
           docker push ${{ secrets.DOCKER_URL }}/jawbts/jawbts-api-domestic:latest
