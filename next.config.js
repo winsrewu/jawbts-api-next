@@ -16,7 +16,8 @@ const nextConfig = {
                 ],
             }
         ]
-    }
+    },
+    output: "standalone"
 }
 
 
