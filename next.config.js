@@ -16,9 +16,6 @@ const nextConfig = {
                 ],
             }
         ]
-    },
-    experimental: {
-        instrumentationHook : true,
     }
 }
 
