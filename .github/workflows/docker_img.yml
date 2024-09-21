@@ -11,8 +11,9 @@ jobs:
         run: |
           docker version
           # 登录阿里云镜像仓库
-          docker login --username=${{ secrets.DOCKER_USERNAME }} --password=${{ secrets.DOCKER_PASSWORD }} ${{ secrets.DOCKER_URL }}
-          cd jawbts-api-next
+          docker login --username=${{ secrets.DOCKER_USERNAME }} ${{ secrets.DOCKER_URL }}
+          ${{ secrets.DOCKER_PASSWORD }}
+          ls
           # 使用Dockerfile构建镜像
           docker build -t nextjs-docker .
           # 推送镜像到镜像仓库
