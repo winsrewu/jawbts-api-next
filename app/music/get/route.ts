@@ -41,7 +41,7 @@ export async function GET(request: Request) {
         let range = headers.get('Range')?.replace("bytes=", "");
         if (range) {
             let rs = range.split("-");
-            console.log(rs)
+            // console.log(rs)
             let end = Number.parseInt(rs[0]) + 300000;
             if (rs.length == 2 && rs[1] != '') {
                 end = Number.parseInt(rs[1]);
@@ -52,7 +52,7 @@ export async function GET(request: Request) {
                 end = Math.min(end, Number.parseInt(rs[0]) + 300000)
             }
             headers.set('Range', `bytes=${rs[0]}-${end}`);
-            console.log(headers.get('Range'));
+            // console.log(headers.get('Range'));
         }
 
         let audio_url;
