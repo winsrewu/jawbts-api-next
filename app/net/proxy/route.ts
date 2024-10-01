@@ -31,6 +31,7 @@ export async function GET(request: Request) {
     headers.set("Sec-Fetch-Site", "none");
     headers.set("Sec-Fetch-User", "?1");
     headers.set("Priority", "u=0, i");
+    headers.set("Referer", "https://www.bilibili.com");
 
     try {
         // 注意, 缓存1天
