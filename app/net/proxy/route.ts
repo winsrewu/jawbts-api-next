@@ -11,11 +11,15 @@ export async function GET(request: Request) {
     const login = await AuthUtils.checkToken(token);
     if (login instanceof Response) return login;
 
-    const url = searchParams.get('url');
+    let url = searchParams.get('url');
     if (!url) return ResponseUtils.missing("Param: url");
 
+    if (url.startsWith('http://')) {
+        url = url.replace('http://', 'https://');
+    }
+
     let headers = request.headers;
-    headers.delete('Authorization');
+    headers.set('User-Agent', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/127.0.0.0 Safari/537.36 Edg/127.0.0.0');
 
     try {
         // 注意, 缓存1天
