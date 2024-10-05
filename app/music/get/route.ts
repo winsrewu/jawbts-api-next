@@ -23,6 +23,7 @@ export async function GET(request: Request) {
         let headers = request.headers;
         headers.set('Referer', 'https://bilibili.com/video/' + id.slice(1));
         headers.set('Origin', 'https://bilibili.com');
+        headers.set('Host', 'bilibili.com');
         headers.delete('Authorization');
         headers.set('Accept', '*/*');
         headers.set('Accept-Encoding', 'identity');
