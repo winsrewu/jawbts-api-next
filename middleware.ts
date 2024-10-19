@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { ResponseUtils } from "./components/ResponseUtils";
 
-const allowedPathNames = ["/music/get", "music/get/info", "next/proxy", "/favicon.ico", "_next/.*"]
+const allowedPathNames = ["/music/get", "music/get/info", "net/proxy", "/favicon.ico", "_next/.*"]
 
 export function middleware(request: NextRequest) {
     const { pathname } = request.nextUrl;
