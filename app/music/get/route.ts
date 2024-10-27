@@ -56,10 +56,12 @@ export async function GET(request: Request) {
             // console.log(headers.get('Range'));
         }
 
+        let debug_url = "";
         let audio_url;
         const id_r = id.slice(1).split("_");
         try {
             // 缓存2分钟
+            debug_url = 'https://www.bilibili.com/video/' + id_r[0] + id_r[1] ? ("?p=" + id_r[1]) : "";
             const response = await fetch('https://www.bilibili.com/video/' + id_r[0] + (id_r[1] ? ("?p=" + id_r[1]) : ""), { next: { revalidate: 120 }, headers: header_with_ua });
             const text = await response.text();
             const res = text.match(/<script>window.__playinfo__=(.*?)<\/script>/)
@@ -67,12 +69,14 @@ export async function GET(request: Request) {
                 // 有些地方没有playinfo, 需要动用另一个接口来拿地址
 
                 // 注意, 缓存一天
+                debug_url = 'https://api.bilibili.com/x/player/pagelist?bvid=' + id_r[0];
                 const response_cid = await fetch('https://api.bilibili.com/x/player/pagelist?bvid=' + id_r[0], { next: { revalidate: 86400 }, headers: header_with_ua });
                 const response_cid_json = await response_cid.json();
                 const p = id_r[1] ? Number.parseInt(id_r[1]) : 0;
                 const params = `bvid=${id_r[0]}&cid=${response_cid_json['data'][p]["cid"]}&qn=0&fnver=0&fnval=4048&fourk=1&gaia_source=&from_client=BROWSER&voice_balance=1&web_location=1315873&wts=${Date.now() / 1e3}`;
 
                 // 缓存5分钟
+                debug_url = "https://api.bilibili.com/x/player/playurl?**WBI**";
                 const response_play_info = await fetch("https://api.bilibili.com/x/player/playurl?" + await BiliBiliUtils.encWbi(params), { next: { revalidate: 300 }, headers: header_with_ua });
                 const response_play_info_json = await response_play_info.json();
 
@@ -85,6 +89,7 @@ export async function GET(request: Request) {
             }
         } catch (e) {
             ErrorUtils.log(e as Error);
+            console.log("URL: " + debug_url);
             return ResponseUtils.serverError((e as Error).message);
         }
 
@@ -95,8 +100,8 @@ export async function GET(request: Request) {
                 headers: headers,
                 cache: 'no-cache'
             });
-            if (response_music.status == 403) {
-                await new Promise(resolve => setTimeout(() => resolve, 500));
+            if (response_music.status >= 300 || response_music.status < 200) {
+                await new Promise(resolve => setTimeout(() => resolve, 1000));
                 response_music = await fetch(audio_url, {
                     headers: headers,
                     cache: 'no-cache'
@@ -104,6 +109,7 @@ export async function GET(request: Request) {
             }
         } catch (e) {
             ErrorUtils.log(e as Error);
+            console.log("URL: " + audio_url);
             return ResponseUtils.serverError((e as Error).message);
         }
 
